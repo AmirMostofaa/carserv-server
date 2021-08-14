@@ -59,8 +59,8 @@ app.get('/services/:id', (req, res) => {
     // console.log(id)
     serviceCollection.find({_id: ObjectId(req.params.id)})
     .toArray((err, documents) => {
-        res.send(documents)
-        console.log(documents)
+        res.send(documents[0])
+        console.log(documents[0])
         console.log(err)
     })
 
