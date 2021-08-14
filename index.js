@@ -22,8 +22,10 @@ client.connect(err => {
   const serviceCollection = client.db("carserv").collection("services");
   const teamCollection = client.db("carserv").collection("team");
   const reviewCollection = client.db("carserv").collection("review");
+  const orderCollection = client.db("carserv").collection("orders")
   // perform actions on the collection object
 
+  console.log(err)
 
   // Service Adding
   app.post('/addService', (req, res) => {
@@ -51,31 +53,61 @@ client.connect(err => {
 
 
 
-
-
-
 // Getting Service By Id
 app.get('/services/:id', (req, res) => {
+    // const id = ObjectId(req.params._id); 
+    // console.log(id)
     serviceCollection.find({_id: ObjectId(req.params.id)})
     .toArray((err, documents) => {
-        res.send(documents[0])
+        res.send(documents)
         console.log(documents)
+        console.log(err)
     })
-
-    // var myId = JSON.parse(req.body.id);
-//     serviceCollection.findOne({'_id': ObjectId(req.body.id)}, function(error,doc) {
-//     if (error) {
-//       callback(error);
-//     } else {
-//        callback(null, doc);
-//     }
-// });
-
 
 })
 
 
 
+// adding Order
+app.post('/addOrder', (req, res) => {
+    const order = req.body;
+    //console.log(order)
+    orderCollection.insertOne(order)
+    .then(result => {
+        console.log(result)
+        res.send(result.insertedCount > 0)
+    })
+})
+
+
+// getting full order List
+app.get('/orderList', (req, res) => {
+    orderCollection.find()
+    .toArray((err, documents) => {
+        res.send(documents)
+    })
+})
+
+
+// getting orders for specific Email
+app.get('/orderViaEmail', (req, res) => {
+
+    orderCollection.find({email: req.query.email})
+    .toArray((err, documents) => {
+        res.status(200).send(documents)
+        console.log(documents)
+    })
+})
+
+
+// Specific Rule for Team
+app.post('/isTeam', (req, res) => {
+    const email = req.body.email;
+    teamCollection.find({email: email})
+    .toArray((err, teams) => {
+        res.send(teams.length > 0)
+    })
+})
 
 
 
